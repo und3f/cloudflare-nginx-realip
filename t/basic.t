@@ -20,7 +20,8 @@ subtest 'get ip list' => sub {
 subtest 'do()' => sub {
     $cf->do;
     open my $fh, '<', $tmp->filename;
-    my @config_ips = grep { !/^\s*#/ } <$fh>;
+    my @config_ips =
+      map { (/^set_real_ip_from\s+(.+);/)[0] } grep { !/^\s*#/ } <$fh>;
     close $fh;
     chomp @config_ips;
     is_deeply \@config_ips, \@ips;

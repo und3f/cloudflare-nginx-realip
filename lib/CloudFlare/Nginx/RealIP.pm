@@ -56,7 +56,7 @@ sub write_config {
     print $fh "# CloudFlare IP ranges updated on "
       . localtime->strftime . "\n";
 
-    print $fh join("\n", @$ips);
+    print $fh join("\n", map {"set_real_ip_from $_;"} @$ips);
     close $fh;
 }
 
