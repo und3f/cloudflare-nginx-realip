@@ -1,0 +1,13 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use CloudFlare::Nginx::RealIP;
+my %args;
+$args{output_file} = $ARGV[0]
+  if @ARGV > 0;
+
+my $cf = CloudFlare::Nginx::RealIP->new(%args);
+
+$cf->do;
