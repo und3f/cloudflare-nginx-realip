@@ -17,6 +17,10 @@ subtest 'get ip list' => sub {
     ok scalar @ips > 2, "got some ips";
 };
 
+subtest 'old_config_matches() (no)' => sub {
+    ok !$cf->old_config_matches(\@ips), 'old config does not matches';
+};
+
 subtest 'do()' => sub {
     $cf->do;
     open my $fh, '<', $tmp->filename;
@@ -25,6 +29,11 @@ subtest 'do()' => sub {
     close $fh;
     chomp @config_ips;
     is_deeply \@config_ips, \@ips;
+};
+
+subtest 'old_config_matches() (yes)' => sub {
+    ok $cf->old_config_matches(\@ips), 'old config matches';
+    ok !$cf->old_config_matches([@ips, '127.1.2.3']), 'old config matches';
 };
 
 &done_testing;
