@@ -121,11 +121,8 @@ from CloudFlare CDN
 
     cloudflare_update_nginx_realip > /dev/null 2>&1 && /etc/init.d/nginx reload
 
-=head1 COPYRIGHT AND LICENSE
+=head1 AUTHOR
 
-Copyright (C) 2016, Sergey Zasenko.
-
-This program is free software, you can redistribute it and/or modify it under
-the same terms as Perl 5.10.
+Sergey Zasenko, C<undef@cpan.org>.
 
 =cut
