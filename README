@@ -1,0 +1,13 @@
+NAME
+    CloudFlare::Nginx::RealIP - generate nginx configuration files to set
+    realip from CloudFlare CDN
+
+SYNOPSIS
+        cloudflare_update_nginx_realip > /dev/null 2>&1 && /etc/init.d/nginx reload
+
+COPYRIGHT AND LICENSE
+    Copyright (C) 2016, Sergey Zasenko.
+
+    This program is free software, you can redistribute it and/or modify it
+    under the same terms as Perl 5.10.
+

@@ -1,11 +1,15 @@
 package CloudFlare::Nginx::RealIP;
 
+use 5.008_001;
 use strict;
 use warnings;
+
+our $VERSION = 0.001;
 
 use LWP::UserAgent;
 use Net::CIDR;
 use Time::Piece;
+use Array::Utils qw(array_diff);
 
 sub new {
     my ($class, %args) = @_;
@@ -47,6 +51,29 @@ sub get_ip_list {
     return @ips;
 }
 
+my $SETREALIP_RE = qr(
+    ^
+    \s*
+    set_real_ip_from
+    \s*
+    (.+)
+    \s*
+    ;
+    \s*
+    $
+)ix;
+
+sub old_config_matches {
+    my ($self, $ips) = @_;
+    my @old_ips;
+
+    open my $fh, '<', $self->{output_file} or return;
+    /$SETREALIP_RE/ && push @old_ips, $1 foreach (<$fh>);
+    close $fh;
+
+    return !array_diff(@old_ips, @$ips);
+}
+
 sub write_config {
     my ($self, $ips) = @_;
 
@@ -71,8 +98,34 @@ sub do {
     my $self = shift;
 
     my @ips = $self->get_ip_list;
+
+    if ($self->old_config_matches(\@ips)) {
+        warn "Cloudflare addresses are not changed\n";
+        exit 3;
+    }
+
     $self->write_config(\@ips);
+    print qq(Successfully updated "$self->{output_file}"\n);
 }
 
 
 1;
+__END__
+
+=head1 NAME
+
+CloudFlare::Nginx::RealIP - generate nginx configuration files to set realip
+from CloudFlare CDN
+
+=head1 SYNOPSIS
+
+    cloudflare_update_nginx_realip > /dev/null 2>&1 && /etc/init.d/nginx reload
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2016, Sergey Zasenko.
+
+This program is free software, you can redistribute it and/or modify it under
+the same terms as Perl 5.10.
+
+=cut
